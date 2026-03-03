@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import css from './Footer.module.css';
 
 export default function Footer() {
@@ -5,8 +6,8 @@ export default function Footer() {
     <footer className={css.footer}>
       <div className={css.wrap}>
         <span>© 2026 NoteHub</span>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
+        <Link href="/privacy">Privacy Policy</Link>
+        <Link href="/terms">Terms of Service</Link>
       </div>
     </footer>
   );

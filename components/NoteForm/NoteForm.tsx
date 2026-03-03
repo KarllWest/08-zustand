@@ -1,7 +1,8 @@
+import React from 'react';
 import css from './NoteForm.module.css';
 
 interface NoteFormProps {
-  onSubmit?: (e: React.FormEvent) => void;
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   onCancel?: () => void;
 }
 

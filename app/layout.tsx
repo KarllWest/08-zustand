@@ -1,6 +1,9 @@
 import { Roboto } from 'next/font/google';
-import { Metadata } from 'next';
-import './globals.css'; 
+import Header from '@/components/Header/Header';
+import Footer from '@/components/Footer/Footer';
+import QueryProvider from '@/lib/providers/QueryProvider';
+
+import './globals.css';
 
 const roboto = Roboto({
   weight: ['400', '500', '700'],
@@ -9,21 +12,24 @@ const roboto = Roboto({
   variable: '--font-roboto',
 });
 
-export const metadata: Metadata = {
-  title: 'NoteHub',
-  description: 'Your notes application',
-  openGraph: {
-    title: 'NoteHub',
-    description: 'Manage your notes',
-    images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'], 
-  },
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={roboto.variable}>
+    <html lang="en" className={roboto.variable} suppressHydrationWarning>
       <body suppressHydrationWarning={true}>
-        {children}
+        <QueryProvider>
+          <Header />
+          <main>
+            {children}
+          </main>
+          {modal}
+          <Footer />
+        </QueryProvider>
       </body>
     </html>
   );

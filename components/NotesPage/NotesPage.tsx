@@ -18,7 +18,7 @@ export default function NotesPageComponent({ children, onAddNote }: NotesPagePro
         </button>
       </div>
 
-      <div>
+      <div className={css.main}>
         {children}
       </div>
 

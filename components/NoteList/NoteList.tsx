@@ -7,6 +7,10 @@ interface NoteListProps {
 }
 
 export default function NoteList({ notes }: NoteListProps) {
+  if (!Array.isArray(notes) || notes.length === 0) {
+    return <p className={css.empty}>No notes found or invalid data format.</p>;
+  }
+
   return (
     <ul className={css.list}>
       {notes.map((note) => (
@@ -15,7 +19,9 @@ export default function NoteList({ notes }: NoteListProps) {
           <p className={css.content}>{note.content}</p>
           <div className={css.footer}>
             {note.tag && <span className={css.tag}>{note.tag}</span>}
-            <Link href={`/notes/${note.id}`} className={css.link}>View</Link>
+            <Link href={`/notes/${note.id}`} className={css.link}>
+              View
+            </Link>
           </div>
         </li>
       ))}

@@ -13,14 +13,11 @@ export default function NoteDetails({ note, onBack }: NoteDetailsProps) {
     <main className={css.main}>
       <div className={css.container}>
         
-        <button type="button" className={css.backBtn} onClick={onBack}>
-          &larr; Back
-        </button>
 
         <div className={css.item}>
           <div className={css.header}>
             <h2>{note.title}</h2>
-              {note.tag && <span className={css.tag}>{note.tag}</span>}
+            {note.tag && <span className={css.tag}>{note.tag}</span>}
           </div>
 
           <p className={css.content}>{note.content}</p>

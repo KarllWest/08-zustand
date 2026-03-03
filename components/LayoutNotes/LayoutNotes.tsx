@@ -14,7 +14,6 @@ export default function LayoutNotes({ children, sidebar }: LayoutNotesProps) {
           {sidebar}
         </aside>
       )}
-      
       <main className={css.notesWrapper}>
         {children}
       </main>

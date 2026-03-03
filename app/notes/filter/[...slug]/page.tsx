@@ -1,23 +1,23 @@
-import { Metadata } from 'next';
+import { fetchNotes } from '@/lib/api/notes';
+import NoteList from '@/components/NoteList/NoteList';
+import NotesPageComponent from '@/components/NotesPage/NotesPage';
 
-export async function generateMetadata({ params }: { params: { slug: string[] } }): Promise<Metadata> {
-  const filterValue = params.slug[0]; 
-  const title = `Notes filtered by ${filterValue} | NoteHub`;
-  
-  return {
-    title,
-    description: `Browse all notes categorized as ${filterValue}`,
-    openGraph: {
-      title,
-      images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'],
-    },
-  };
-}
+export default async function FilterPage({ params }: { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params;
+  const category = slug?.[0] || 'all';
 
-export default function FilterPage({ params }: { params: { slug: string[] } }) {
-  return (
-    <div>
-      <h1>Filter: {params.slug[0]}</h1>
-    </div>
-  );
+  try {
+    const notes = await fetchNotes(category);
+    return (
+      <NotesPageComponent>
+        <NoteList notes={notes} />
+      </NotesPageComponent>
+    );
+  } catch (error) {
+    return (
+      <NotesPageComponent>
+        <p style={{ color: 'red' }}>Помилка API (403). Потрібен токен авторизації.</p>
+      </NotesPageComponent>
+    );
+  }
 }

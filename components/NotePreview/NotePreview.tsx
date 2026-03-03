@@ -2,9 +2,9 @@
 
 import css from './NotePreview.module.css';
 import { useQuery } from '@tanstack/react-query';
-import { deleteNote, fetchNoteById } from '@/lib/api/notes';
+import { fetchNoteById } from '@/lib/api/notes';
 import { Note } from '@/types/note';
-import { useRouter } from 'next/navigation'; // 👈 Додали для кнопки закриття
+import { useRouter } from 'next/navigation';
 
 interface NotePreviewProps {
   noteId: string;
@@ -25,8 +25,11 @@ export default function NotePreview({ noteId }: NotePreviewProps) {
 
   return (
     <div className={css.container}>
-      <div className={css.item}>
+      <button type="button" className={css.backBtn} onClick={() => router.back()}>
+        &larr; Back
+      </button>
 
+      <div className={css.item}>
         <div className={css.header}>
           <h2>{data.title}</h2>
           {data.tag && <span className={css.tag}>{data.tag}</span>}
@@ -45,7 +48,6 @@ export default function NotePreview({ noteId }: NotePreviewProps) {
             </>
           )}
         </div>
-        
       </div>
     </div>
   );
