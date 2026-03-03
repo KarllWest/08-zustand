@@ -1,23 +1,30 @@
+import { Metadata } from 'next'; 
 import { fetchNotes } from '@/lib/api';
-import NoteList from '@/components/NoteList/NoteList';
-import NotesPageComponent from '@/components/NotesPage/NotesPage';
+import NotesClient from './Notes.client';
 
-export default async function FilterPage({ params }: { params: Promise<{ slug: string[] }> }) {
+interface Props {
+  params: Promise<{ slug: string[] }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const category = slug?.[0] || 'all';
+  const capitalized = category.charAt(0).toUpperCase() + category.slice(1);
+
+  return {
+    title: `${capitalized} Notes`,
+    description: `View all notes in ${category} category`,
+    openGraph: {
+      title: `${capitalized} Notes | NoteHub`,
+      description: `Browse your ${category} notes collection.`,
+      images: [{ url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg' }],
+    },
+  };
+}
+
+export default async function FilterPage({ params }: Props) {
   const { slug } = await params;
   const category = slug?.[0] || 'all';
 
-  try {
-    const notes = await fetchNotes(category);
-    return (
-      <NotesPageComponent>
-        <NoteList notes={notes} />
-      </NotesPageComponent>
-    );
-  } catch (error) {
-    return (
-      <NotesPageComponent>
-        <p style={{ color: 'red' }}>Помилка API (403). Потрібен токен авторизації.</p>
-      </NotesPageComponent>
-    );
-  }
+  return <NotesClient category={category} />;
 }
