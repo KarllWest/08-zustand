@@ -1,7 +1,7 @@
 import { Roboto } from 'next/font/google';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
-import QueryProvider from '@/providers/QueryProvider';
+import QueryProvider from '@/lib/providers/QueryProvider';
 
 import './globals.css';
 
