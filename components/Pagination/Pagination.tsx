@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import css from './Pagination.module.css';
 
-interface PaginationProps {
+export interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  basePath: string; 
+  basePath: string;
+  onPageChange?: (page: number) => void; 
 }
 
 export default function Pagination({ currentPage, totalPages, basePath }: PaginationProps) {

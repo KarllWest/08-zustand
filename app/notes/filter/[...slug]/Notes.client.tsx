@@ -2,18 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
-import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 
-export default function NotesClient({ category }: { category: string }) {
-  const router = useRouter();
+export default function NotesClient({ tag }: { tag: string | string[] }) {
+  
+  const currentTag = Array.isArray(tag) ? tag[0] : tag;
+
+  console.log('Поточний тег для фільтрації:', currentTag);
+
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  
   const [page, setPage] = useState(1);
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
@@ -22,37 +24,34 @@ export default function NotesClient({ category }: { category: string }) {
     return () => clearTimeout(handler);
   }, [search]);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['notes', category, debouncedSearch, page],
-    queryFn: () => fetchNotes(category),
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['notes', currentTag, debouncedSearch, page],
+    queryFn: () => fetchNotes(currentTag, debouncedSearch, page),
+    retry: false,
   });
+
+  if (isError) return <p>Помилка: перевірте шлях до API (має бути /api/notes)</p>;
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', gap: '10px' }}>
-        <SearchBox value={search} onChange={setSearch} />
-        
-        <button 
-          onClick={() => router.push('/notes/action/create')}
-          style={{ padding: '8px 16px', cursor: 'pointer' }}
-        >
-          + New Note
-        </button>
-      </div>
-
       {isLoading ? (
-        <p>Loading notes...</p>
+        <p>Loading...</p>
       ) : (
         <>
-          <NoteList notes={data || []} />
+          {data?.notes?.length > 0 ? (
+            <NoteList notes={data.notes} />
+          ) : (
+            <p>No notes found.</p>
+          )}
           
-          <div style={{ marginTop: '20px' }}>
+          {data?.totalPages > 1 && (
             <Pagination 
               currentPage={page} 
-              totalPages={10} 
-              basePath={`/notes/filter/${category}?page=`} 
+              totalPages={data.totalPages} 
+              onPageChange={(p: number) => setPage(p)}
+              basePath={`/notes/filter/${currentTag}?page=`}
             />
-          </div>
+          )}
         </>
       )}
     </div>

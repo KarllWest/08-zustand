@@ -1,24 +1,35 @@
+'use client';
+
 import Link from 'next/link';
-import css from './SidebarNotes.module.css';
+import { usePathname } from 'next/navigation';
+import styles from './SidebarNotes.module.css'; 
 
-const TAGS = ['Work', 'Personal', 'Home', 'Study'];
+const VALID_TAGS = ['all', 'Todo', 'Work', 'Personal', 'Meeting', 'Shopping'];
 
-export default function SidebarNotes() {
+export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
-    <ul className={css.menuList}>
-      <li className={css.menuItem}>
-        <Link href="/notes/filter/all" className={css.menuLink}>
-          All notes
-        </Link>
-      </li>
+    <aside className={styles.sidebar}>
+      <nav>
+        <ul className={styles.menuList}>
+          {VALID_TAGS.map((tag) => {
+            const href = tag === 'all' ? '/notes' : `/notes/filter/${tag}`;
+            const isActive = pathname === href;
 
-      {TAGS.map((tag) => (
-        <li key={tag} className={css.menuItem}>
-          <Link href={`/notes/filter/${tag.toLowerCase()}`} className={css.menuLink}>
-            {tag}
-          </Link>
-        </li>
-      ))}
-    </ul>
+            return (
+              <li key={tag} className={styles.menuItem}>
+                <Link 
+                  href={href} 
+                  className={`${styles.menuLink} ${isActive ? styles.active : ''}`}
+                >
+                  {tag}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </aside>
   );
 }
