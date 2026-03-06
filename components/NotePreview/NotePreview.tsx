@@ -1,8 +1,8 @@
 'use client';
 
 import css from './NotePreview.module.css';
-import { useQuery } from '@tanstack/react-query';
-import { fetchNoteById } from '@/lib/api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fetchNoteById, deleteNote } from '@/lib/api';
 import { Note } from '@/types/note';
 import { useRouter } from 'next/navigation';
 
@@ -11,12 +11,21 @@ interface NotePreviewProps {
 }
 
 export default function NotePreview({ noteId }: NotePreviewProps) {
-  const router = useRouter(); 
-  
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const { data, isLoading, error } = useQuery<Note>({
     queryKey: ['note', noteId],
     queryFn: () => fetchNoteById(noteId),
     enabled: !!noteId,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteNote(noteId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      router.back();
+    },
   });
 
   if (isLoading) return <div className={css.container}><div className={css.content}>Loading...</div></div>;
@@ -48,6 +57,15 @@ export default function NotePreview({ noteId }: NotePreviewProps) {
             </>
           )}
         </div>
+
+        <button
+          type="button"
+          className={css.deleteBtn}
+          onClick={() => deleteMutation.mutate()}
+          disabled={deleteMutation.isPending}
+        >
+          {deleteMutation.isPending ? 'Deleting...' : 'Delete note'}
+        </button>
       </div>
     </div>
   );

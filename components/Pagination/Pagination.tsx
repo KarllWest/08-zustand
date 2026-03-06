@@ -8,29 +8,40 @@ export interface PaginationProps {
   onPageChange?: (page: number) => void; 
 }
 
-export default function Pagination({ currentPage, totalPages, basePath }: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, basePath, onPageChange }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
+  if (onPageChange) {
+    return (
+      <ul className={css.pagination}>
+        {pages.map((page) => (
+          <li key={page} className={page === currentPage ? css.active : ''}>
+            <button onClick={() => onPageChange(page)}>{page}</button>
+          </li>
+        ))}
+
+        {currentPage < totalPages && (
+          <li>
+            <button onClick={() => onPageChange(currentPage + 1)}>»</button>
+          </li>
+        )}
+      </ul>
+    );
+  }
+
   return (
     <ul className={css.pagination}>
       {pages.map((page) => (
-        <li 
-          key={page} 
-          className={`${page === currentPage ? css.active : ''}`}
-        >
-          <Link href={`${basePath}${page}`}>
-            {page}
-          </Link>
+        <li key={page} className={page === currentPage ? css.active : ''}>
+          <Link href={`${basePath}${page}`}>{page}</Link>
         </li>
       ))}
-      
+
       {currentPage < totalPages && (
         <li>
-          <Link href={`${basePath}${currentPage + 1}`}>
-            »
-          </Link>
+          <Link href={`${basePath}${currentPage + 1}`}>»</Link>
         </li>
       )}
     </ul>
