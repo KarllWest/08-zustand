@@ -14,7 +14,7 @@ export default function Sidebar() {
       <nav>
         <ul className={styles.menuList}>
           {VALID_TAGS.map((tag) => {
-            const href = tag === 'all' ? '/notes' : `/notes/filter/${tag}`;
+            const href = `/notes/filter/${tag}`;
             const isActive = pathname === href;
 
             return (

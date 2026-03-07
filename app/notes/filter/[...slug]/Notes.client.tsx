@@ -7,9 +7,10 @@ import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
 import SearchBox from '@/components/SearchBox/SearchBox';
+import css from './Notes.client.module.css';
 
-export default function NotesClient({ tag }: { tag: string | string[] }) {
-  const currentTag = Array.isArray(tag) ? tag[0] : tag;
+export default function NotesClient({ tag }: { tag: string }) {
+  const currentTag = tag;
 
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -33,9 +34,9 @@ export default function NotesClient({ tag }: { tag: string | string[] }) {
 
   return (
     <div>
-      <div>
+      <div className={css.toolbar}>
         <SearchBox value={search} onChange={setSearch} />
-        <Link href="/notes/action/create">Create note</Link>
+        <Link href="/notes/action/create" className={css.createLink}>Create note</Link>
       </div>
 
       {isLoading ? (
@@ -53,7 +54,6 @@ export default function NotesClient({ tag }: { tag: string | string[] }) {
               currentPage={page}
               totalPages={data.totalPages}
               onPageChange={(p: number) => setPage(p)}
-              basePath={`/notes/filter/${currentTag}?page=`}
             />
           )}
         </>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
@@ -33,7 +32,6 @@ export default function NotesClient() {
     <div>
       <div>
         <SearchBox value={search} onChange={setSearch} />
-        <Link href="/notes/action/create">Create note</Link>
       </div>
 
       {isLoading ? (
@@ -51,7 +49,6 @@ export default function NotesClient() {
               currentPage={page}
               totalPages={data.totalPages}
               onPageChange={(p: number) => setPage(p)}
-              basePath="/notes?page="
             />
           )}
         </>
