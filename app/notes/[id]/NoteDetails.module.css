@@ -1,0 +1,46 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.item {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 12px;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-bottom: 16px;
+}
+
+.content {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+}
+
+.date {
+  font-size: 0.85rem;
+  color: #999;
+}
