@@ -1,19 +1,19 @@
-import { Metadata } from 'next';
-import NoteForm from '@/components/NoteForm/NoteForm';
+import type { Metadata } from "next";
+import CreateNoteClient from "./CreateNote.client";
+import css from "./CreateNote.module.css";
 
 export const metadata: Metadata = {
-  title: 'Create New Note | NoteHub',
-  description: 'Create a new note to stay organized.',
+  title: "Create a new note in NoteHub.",
+  description: "NoteHub — an application for creating and managing notes.",
   openGraph: {
-    title: 'Create New Note | NoteHub',
-    description: 'Create a new note to stay organized.',
-    url: 'https://notehub-public.goit.study/notes/action/create', 
+    title: "Create a new note in NoteHub.",
+    description: "NoteHub — an application for creating and managing notes.",
+    url: "/notes/action/create",
     images: [
       {
-        url: '/og-image.png',
-        width: 800,
-        height: 600,
-        alt: 'NoteHub Create Note',
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+        width: 1200,
+        height: 630,
       },
     ],
   },
@@ -21,9 +21,11 @@ export const metadata: Metadata = {
 
 export default function CreateNotePage() {
   return (
-    <main>
-      <h1>Create New Note</h1>
-      <NoteForm />
+    <main className={css.main}>
+      <div className={css.container}>
+        <h1 className={css.title}>Create note</h1>
+        <CreateNoteClient />
+      </div>
     </main>
   );
 }

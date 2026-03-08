@@ -1,70 +1,88 @@
-'use client';
+"use client";
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useNoteStore, NoteTag } from '@/lib/store/noteStore';
-import { createNote } from '@/lib/api';
-import css from './NoteForm.module.css';
+import css from "./NoteForm.module.css";
+import { createNote } from "@/lib/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNoteStore } from "@/lib/store/noteStore";
 
-export default function NoteForm() {
-  const router = useRouter();
+export interface NoteFormProps {
+  onCancel: () => void;
+}
+
+export default function NoteForm({ onCancel }: NoteFormProps) {
   const queryClient = useQueryClient();
-  const { draft, setDraft, resetDraft } = useNoteStore();
+  const { draft, setDraft, clearDraft } = useNoteStore();
 
-  const mutation = useMutation({
+  const { mutate } = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      resetDraft();
-      router.push('/notes');
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      clearDraft();
+      onCancel();
     },
   });
 
+  const handleSubmit = async (formData: FormData) => {
+    const values = {
+      title: formData.get("title") as string,
+      content: formData.get("content") as string,
+      tag: formData.get("tag") as string,
+    };
+    mutate(values);
+  };
+
   return (
-    <form className={css.form} onSubmit={(e) => { e.preventDefault(); mutation.mutate(draft); }}>
+    <form className={css.form} action={handleSubmit}>
       <div className={css.formGroup}>
         <label htmlFor="title">Title</label>
         <input
-          className={css.input}
           id="title"
           name="title"
+          type="text"
+          className={css.input}
           value={draft.title}
           onChange={(e) => setDraft({ title: e.target.value })}
           required
+          minLength={3}
+          maxLength={50}
+        />
+      </div>
+
+      <div className={css.formGroup}>
+        <label htmlFor="content">Content</label>
+        <textarea
+          id="content"
+          name="content"
+          rows={8}
+          className={css.textarea}
+          value={draft.content}
+          onChange={(e) => setDraft({ content: e.target.value })}
         />
       </div>
 
       <div className={css.formGroup}>
         <label htmlFor="tag">Tag</label>
         <select
-          className={css.select}
           id="tag"
           name="tag"
+          className={css.select}
           value={draft.tag}
-          onChange={(e) => setDraft({ tag: e.target.value as NoteTag })}
+          onChange={(e) => setDraft({ tag: e.target.value })}
         >
-          {['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'].map(t => (
-            <option key={t} value={t}>{t}</option>
-          ))}
+          <option value="Todo">Todo</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Meeting">Meeting</option>
+          <option value="Shopping">Shopping</option>
         </select>
       </div>
 
-      <div className={css.formGroup}>
-        <label htmlFor="content">Content</label>
-        <textarea
-          className={css.textarea}
-          id="content"
-          name="content"
-          value={draft.content}
-          onChange={(e) => setDraft({ content: e.target.value })}
-          required
-        />
-      </div>
-
       <div className={css.actions}>
-        <button className={css.cancelButton} type="button" onClick={() => router.back()}>Cancel</button>
-        <button className={css.submitButton} type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? 'Saving...' : 'Save'}
+        <button type="button" className={css.cancelButton} onClick={onCancel}>
+          Cancel
+        </button>
+        <button type="submit" className={css.submitButton}>
+          Create note
         </button>
       </div>
     </form>

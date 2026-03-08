@@ -1,51 +1,33 @@
-'use client';
+"use client";
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { Note } from '@/types/note';
-import { deleteNote } from '@/lib/api';
+import { useQuery } from "@tanstack/react-query";
+import { fetchNoteById } from "@/lib/api";
+import css from "./NoteDetails.module.css";
 
-interface NoteDetailsProps {
-  note: Note;
-}
-
-export default function NoteDetails({ note }: NoteDetailsProps) {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: () => deleteNote(note.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      router.push('/notes');
-    },
+export default function NoteDetailsClient({ id }: { id: string }) {
+  const { data: note, isLoading, error } = useQuery({
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteById(id),
+    enabled: !!id,
+    refetchOnMount: false,
   });
 
+  if (!id) return <p>Invalid note ID</p>;
+  if (isLoading) return <p>Loading, please wait...</p>;
+  if (error || !note) return <p>Something went wrong.</p>;
+
   return (
-    <article style={{ padding: '20px', maxWidth: '600px' }}>
-      <button
-        onClick={() => router.back()}
-        style={{ marginBottom: '20px', cursor: 'pointer' }}
-      >
-        ← Back
-      </button>
-
-      <h1>{note.title}</h1>
-      <div style={{ margin: '10px 0', color: '#666' }}>
-        <span>Category: <strong>{note.tag || 'General'}</strong></span>
+    <div className={css.container}>
+      <div className={css.item}>
+        <div className={css.header}>
+          <h2>{note.title}</h2>
+        </div>
+        <p className={css.tag}>{note.tag}</p>
+        <p className={css.content}>{note.content}</p>
+        <p className={css.date}>
+          Created: {new Date(note.createdAt).toLocaleDateString()}
+        </p>
       </div>
-      <hr />
-      <div style={{ marginTop: '20px', lineHeight: '1.6' }}>
-        {note.content}
-      </div>
-
-      <button
-        onClick={() => mutation.mutate()}
-        disabled={mutation.isPending}
-        style={{ marginTop: '20px', cursor: 'pointer' }}
-      >
-        {mutation.isPending ? 'Deleting...' : 'Delete note'}
-      </button>
-    </article>
+    </div>
   );
 }

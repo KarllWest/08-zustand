@@ -1,58 +1,55 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api';
-import NoteList from '@/components/NoteList/NoteList';
-import Pagination from '@/components/Pagination/Pagination';
-import SearchBox from '@/components/SearchBox/SearchBox';
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import { fetchNotes, type FetchNotesResponse } from "@/lib/api";
+import NoteList from "@/components/NoteList/NoteList";
+import Pagination from "@/components/Pagination/Pagination";
+import SearchBox from "@/components/SearchBox/SearchBox";
+import Loader from "@/components/Loader/Loader";
+import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
 
 export default function NotesClient() {
-  const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-      setPage(1);
-    }, 500);
-    return () => clearTimeout(handler);
-  }, [search]);
+  const debouncedSearch = useDebouncedCallback((q: string) => {
+    setQuery(q);
+    setPage(1);
+  }, 500);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['notes', 'all', debouncedSearch, page],
-    queryFn: () => fetchNotes(undefined, debouncedSearch, page),
-    retry: false,
+    queryKey: ["notes", query, page, "all"],
+    queryFn: () => fetchNotes(page, 12, undefined, query),
+    placeholderData: (prev: FetchNotesResponse | undefined) => {
+      return page > 1 ? prev : undefined;
+    },
   });
 
-  if (isError) return <p>Error loading notes. Please try again.</p>;
+  const { notes = [], totalPages = 0 } = data ?? {};
 
   return (
     <div>
       <div>
-        <SearchBox value={search} onChange={setSearch} />
+        <SearchBox onSearch={debouncedSearch} />
+        {totalPages > 1 && (
+          <Pagination
+            pageCount={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+          />
+        )}
       </div>
 
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {data?.notes?.length > 0 ? (
-            <NoteList notes={data.notes} />
-          ) : (
-            <p>No notes found.</p>
-          )}
+      {isLoading && <Loader />}
+      {isError && <ErrorMessage message="Failed to load notes." />}
 
-          {data?.totalPages > 1 && (
-            <Pagination
-              currentPage={page}
-              totalPages={data.totalPages}
-              onPageChange={(p: number) => setPage(p)}
-            />
-          )}
-        </>
+      {!isLoading && !isError && notes.length === 0 && (
+        <ErrorMessage message="No notes found" />
       )}
+
+      {notes.length > 0 && <NoteList notes={notes} />}
     </div>
   );
 }

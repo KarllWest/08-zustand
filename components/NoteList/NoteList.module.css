@@ -76,7 +76,8 @@
   text-overflow: ellipsis;
 }
 
-.link {
+.link,
+.viewLink {
   align-self: flex-end;
   padding: 6px 12px;
   font-size: 14px;
@@ -90,6 +91,7 @@
   transition: background-color 0.2s ease;
 }
 
-.link:hover {
+.link:hover,
+.viewLink:hover {
   background-color: #0b5ed7;
 }

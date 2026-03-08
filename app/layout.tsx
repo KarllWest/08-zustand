@@ -1,56 +1,52 @@
-import type { Metadata } from 'next'; 
-import { Roboto } from 'next/font/google';
-import Header from '@/components/Header/Header';
-import Footer from '@/components/Footer/Footer';
-import QueryProvider from '@/lib/providers/QueryProvider';
-import './globals.css';
+import type { Metadata } from "next";
+import { Roboto } from "next/font/google";
+import "./globals.css";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
+import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 
 const roboto = Roboto({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '700'],
-  variable: '--font-roboto',
-  display: 'swap',
+  weight: ["400", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto",
 });
 
 export const metadata: Metadata = {
-  title: {
-    template: '%s | NoteHub',
-    default: 'NoteHub - Your Personal Notes',
-  },
-  description: 'Manage your notes efficiently with NoteHub.',
+  title: "NoteHub",
+  description: "NoteHub — an application for creating and managing notes.",
   openGraph: {
-    title: 'NoteHub',
-    description: 'The best place to keep your thoughts organized.',
-    url: 'https://notehub.example.com', 
-    siteName: 'NoteHub',
+    title: "NoteHub",
+    description: "NoteHub — an application for creating and managing notes.",
+    url: "https://notehub-public.goit.study",
     images: [
       {
-        url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
         width: 1200,
         height: 630,
       },
     ],
-    locale: 'en_US',
-    type: 'website',
   },
 };
 
 export default function RootLayout({
   children,
   modal,
-}: {
+}: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" className={roboto.variable}>
-      <body suppressHydrationWarning>
-        <QueryProvider>
+    <html lang="en">
+      <body className={`${roboto.variable}`} suppressHydrationWarning>
+        <TanStackProvider>
           <Header />
-          <main>{children}</main>
+          <main>
+            {children}
+            {modal}
+          </main>
           <Footer />
-          {modal}
-        </QueryProvider>
+        </TanStackProvider>
       </body>
     </html>
   );

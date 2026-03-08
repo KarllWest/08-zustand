@@ -1,0 +1,27 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  width: 100%;
+}
+
+.link {
+  display: block;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.link:hover {
+  background-color: #444;
+  color: #fff;
+}

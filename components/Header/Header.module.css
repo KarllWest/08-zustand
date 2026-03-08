@@ -40,3 +40,8 @@
 .navigationLink:hover {
   color: #ddd;
 }
+
+.active {
+  color: #f0c040;
+  font-weight: 600;
+}
